@@ -2,15 +2,16 @@
   <div id="suite-login" class="content">
     <div style="display: flex; flex-flow: column wrap; justify-content: center;">
       <h1><span style="font-weight: lighter;">iGS</span> <span>Suite</span></h1>
-      <div id="loginLayout">
+      <div id="loginLayout" class="loginStandBy" :class="{'loginError' : hasError}">
         <img style="margin-left: 12px; margin-top: 12px;" src="../../../assets/LogoCorp.png">
         <h3>Iniciar sesión en iGS Suite:</h3>
         <form>
           <label for="user">Usuario:</label>
-          <input id="user" type="user">
+          <input id="user" type="user" v-model="user" placeholder="Ej: 12345670" autocomplete="off">
           <label for="pass">Contraseña</label>
-          <input id="pass" type="password">
-          <div style="display: flex; flex-flow: row wrap; justify-content: flex-end;">
+          <input id="pass" type="password" v-model="pass" autocomplete="off">
+          <div style="display: flex; flex-flow: row wrap; justify-content: space-between;">
+            <p class="loginStandBy"> {{messageError}} </p>
             <input id="submit" type="submit" value="Login" @click.prevent="Login">
           </div>
         </form>
@@ -20,36 +21,81 @@
 </template>
 
 <script>
+import JSSHA from "jssha";
 export default {
-  name: 'Suite-Login',
-  components: {
-  },
-  methods:{
-    Login(){
-      console.warn('Login');
+  name: "Suite-Login",
+  components: {},
+  data() {
+    return{
+      user: "",
+      pass: "",
+      hasError: false,
+      messageError: ''
     }
+  },
+  methods: {
+    Login() {
+
+      if(this.user=='' || this.pass==''){
+        this.messageError='Debe ingresar usuario y contraseña, luego presionar "Enter" o "Login".'
+        this.hasError= true;
+      }
+      else{
+      var shaObj = new JSSHA("SHA-512","TEXT");
+      shaObj.update(this.pass);
+
+      var User = this.user;
+      var Pass = shaObj.getHash("B64");
+      console.warn("Login " + User + ' ' + Pass);
+      this.messageError="Usuario y/o contraseña incorrecta. Por favor verifique e inténtelo nuevamente."
+      this.hasError= true;
+      }
+    },
+  },
+  mounted(){
+    document.getElementById("user").focus();
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.content{
+.content {
   position: absolute;
   background-color: #0078d7;
   height: 100%;
   width: 100%;
-
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  
 }
-#loginLayout{
+#loginLayout {
   background-color: white;
   width: 480px;
   height: 400px;
+  box-shadow: 0 0 4px #000;
+  border-radius: 5px;
 }
+.loginStandBy{
+  border-bottom: 8px solid #FFFFFF;
+}
+.loginStandBy p{
+  margin-top: 12px;
+  font-family: "Titillium Web", sans-serif;
+  text-align: justify;
+  color: #ffffff;
+  width: 265px;
+  height: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.loginError{
+  border-bottom: 8px solid #e81123;
+}
+.loginError p{
+  color: #e81123;
+}
+
 h1 {
   margin: 0;
   margin-bottom: 24px;
@@ -70,29 +116,34 @@ h3 {
   -webkit-font-smoothing: antialiased;
   font-weight: bold;
 }
-form{
+form {
   padding: 36px;
   display: flex;
   flex-flow: column wrap;
   justify-content: flex-end;
 }
-#user, #pass, #submit{
+#user,
+#pass,
+#submit {
   font-family: "Titillium Web", sans-serif;
   font-size: 16px;
   height: 24px;
   margin-bottom: 12px;
   margin-top: 4px;
 }
-#user, #pass{
+#user,
+#pass {
   border: none;
+  padding-left: 12px;
+  padding-right: 12px;
   border-bottom-color: #0078d7;
   border-bottom-style: solid;
   border-bottom-width: 1px;
 }
-input:focus{
+input:focus {
   outline: none;
 }
-#submit{
+#submit {
   float: right;
   height: 48px;
   width: 120px;
@@ -100,13 +151,14 @@ input:focus{
   margin-top: 12px;
   background-color: white;
   color: #0078d7;
-  border: 1px solid #0078d7; 
+  border: 1px solid #0078d7;
 }
-#submit:hover{
+#submit:hover {
   background-color: #0078d7;
   color: white;
 }
-label{
+label {
   font-family: "Titillium Web", sans-serif;
 }
+
 </style>
