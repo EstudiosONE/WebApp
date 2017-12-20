@@ -22,6 +22,8 @@
 
 <script>
 import JSSHA from "jssha";
+import { EventBus } from '../../../event-bus';
+
 export default {
   name: "Suite-Login",
   components: {},
@@ -41,14 +43,18 @@ export default {
         this.hasError= true;
       }
       else{
+        if(this.user == '47378274' && this.pass == 'dierod17U21626'){
+          EventBus.$emit('Suite-Login-Successful');
+        }
+        else{
+          this.messageError="Usuario y/o contraseña incorrecta. Por favor verifique e inténtelo nuevamente."
+          this.hasError= true;
+        }
       var shaObj = new JSSHA("SHA-512","TEXT");
       shaObj.update(this.pass);
 
       var User = this.user;
-      var Pass = shaObj.getHash("B64");
-      console.warn("Login " + User + ' ' + Pass);
-      this.messageError="Usuario y/o contraseña incorrecta. Por favor verifique e inténtelo nuevamente."
-      this.hasError= true;
+      var Pass = shaObj.getHash("B64");   
       }
     },
   },
