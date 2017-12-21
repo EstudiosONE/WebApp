@@ -1,34 +1,20 @@
 <template>
-  <div id="suite-main" class="content">
-    <button id="openMenu" type="button" @click="OpenMenu">
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" version="1.1">
-        <g id="surface1">
-          <path d="M 2 5 L 2 7 L 22 7 L 22 5 Z M 2 11 L 2 13 L 22 13 L 22 11 Z M 2 17 L 2 19 L 22 19 L 22 17 Z "></path>
-        </g>
-      </svg>
-    </button>
-    <div id="header">
-      <div>
-        <h1><span style="font-weight: 100;">iGS</span> <span>Suite</span> | <span style="font-weight: 100;">{{actualModule}}</span></h1> 
+  <div id="Main-Home" class="content">
+    <div id="ctn">
+      <h1>Hola, Diego :-)</h1>
+      <h3>¡Creemos que estos shortcuts van a ayudarte a ser más ágil!!!</h3>
+      <div style="margin-left: -16px; margin-top: 16px; display: flex;">
+        <b-t-n-func :description="modules[1].description" :data="modules[1].Pdata"></b-t-n-func>
+        <b-t-n-func :description="modules[2].description" :data="modules[2].Pdata"></b-t-n-func>
+        <b-t-n-func :description="modules[3].description" :data="modules[3].Pdata"></b-t-n-func>
+        <b-t-n-func :description="modules[4].description" :data="modules[4].Pdata"></b-t-n-func>
+        <b-t-n-func :description="modules[5].description" :data="modules[5].Pdata"></b-t-n-func>
       </div>
     </div>
-    <div id="menu" :style="menuStyle">
-      <img src="../../../assets/LogoCorp.png">
-      <div v-for="item in modules" :key="item.description">
-        <btn-menu :description='item.description' :data='item.Pdata' :isSelected='item.isSelected'></btn-menu>
-      </div>
-    </div>
-    <home-m-o-d class="container" id="container">
-    </home-m-o-d>
   </div>
 </template>
 
 <script>
-import JSSHA from "jssha";
-import btnMenu from "../comp/btn-MenuIconMonoWithDescription";
-import HomeMOD from "../Main/Home/HomeMOD";
-import { EventBus } from "../../../event-bus";
-
 var Modules = [
   {
     Pdata:
@@ -74,64 +60,16 @@ var Modules = [
   }
 ];
 
+import BTNFunc from "../../comp/btn-MenuIconSC";
 export default {
-  name: "Suite-Main",
+  name: "HomeMOD",
   components: {
-    btnMenu,
-    HomeMOD
+    BTNFunc
   },
   data() {
     return {
-      menuStyle: {
-        "grid-column-end": "3",
-        "background-color": "transparent"
-      },
-      isMenuActive: false,
-      actualModule: "Home",
       modules: Modules
     };
-  },
-  methods: {
-    OpenMenu() {
-      if (this.isMenuActive) {
-        this.menuStyle = {
-          width: "72px",
-          "background-color": "transparent",
-          "box-shadow": "none"
-        };
-        this.isMenuActive = false;
-      } else {
-        this.menuStyle = {
-          width: "264px",
-          "background-color": "#FFFFFF",
-          "box-shadow": "0 0 8px #000"
-        };
-        this.isMenuActive = true;
-      }
-    }
-  },
-  created() {
-    EventBus.$on("Suite-Menu-SelectModule", module => {
-      this.actualModule = module;
-      Modules.forEach(element => {
-        if (element.description == module) {
-          element.isSelected = true;
-        } else {
-          element.isSelected = false;
-        }
-      });
-      if (this.isMenuActive) {
-        this.menuStyle = {
-          width: "72px",
-          "background-color": "transparent",
-          "box-shadow": "none"
-        };
-        this.isMenuActive = false;
-      }
-    });
-  },
-  beforeDestroy() {
-    EventBus.$off("Suite-Menu-SelectModule");
   }
 };
 </script>
@@ -139,94 +77,33 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Titillium+Web");
+
 .content {
   position: absolute;
-  background-color: whitesmoke;
-  height: 100%;
+  background-color: transparent;
   width: 100%;
+  height: 100%;
   display: grid;
-  grid-template-columns: 12px 60px 12px 180px 1fr;
-  grid-template-rows: 72px 12px 1fr;
+  grid-template-columns: 0.5fr 860px 1.5fr;
+  grid-template-rows: 0.5fr 360px 1.5fr;
 }
-
-.container{
-  grid-row-start: 3;
-  grid-row-end: 4;
-  grid-column-start: 4;
-  grid-column-end: 6;
-}
-
-#openMenu {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  grid-row-start: 1;
-  grid-row-end: 2;
-  grid-column-start: 1;
-  grid-column-end: 3;
-  padding: 24px;
-  background-color: #ffffff;
-  border: 0px solid transparent;
-  color: #252525;
-  z-index: 220;
-}
-#openMenu svg g path {
-  fill: #252525;
-}
-#openMenu:focus {
-  outline: none;
-}
-#openMenu:hover svg g path {
-  fill: #0078d7;
-}
-#menu {
-  position: absolute;
-  width: 72px;
-  height: 100%;
-  grid-column-start: 1;
-  grid-row-start: 1;
-  grid-row-end: 4;
-  background-color: #ffffff;
-  z-index: 200;
-  transition: 0.2s;
-  overflow: hidden;
-}
-#menu img {
-  height: 72px;
-  float: right;
-  padding: 0 22px 0 0;
-}
-#header {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  grid-row-start: 1;
-  grid-row-end: 2;
-  grid-column-start: 1;
-  grid-column-end: 6;
-
-  display: grid;
-  grid-template-columns: 84px 1fr;
-
-  background-color: #ffffff;
-  box-shadow: 0 0 8px #000;
-  z-index: 100;
-}
-#header div {
-  position: absolute;
-  height: 100%;
-  grid-column: 2;
-  grid-row-start: 1;
+#ctn {
+  grid-row-start: 2;
   grid-row-end: 3;
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: center;
-  align-content: center;
+  grid-column-start: 2;
+  grid-column-end: 3;
 }
-#header div h1 {
+h1 {
   font-family: "Titillium Web";
-  font-size: 24px;
+  font-size: 48px;
   color: #252525;
+  margin: 0px;
+}
+h3 {
+  font-family: "Titillium Web";
+  color: #252525;
+  font-size: 24px;
+
   margin: 0px;
 }
 </style>
